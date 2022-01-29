@@ -1,0 +1,26 @@
+function setup(){
+    SetCanvas(600,600);
+    SetBackground(rgb(0,255,0));
+    int a = 1;
+    int b = 2;
+    int c = Sin(2^(a+3));
+    int x = 0;
+    Console(c);
+    a = 0;
+    c = Sin(2^(a+3));
+    Console(c);
+
+}
+
+function animate(){
+    SetBackground(rgb(x,255,0));
+    Draw(Circle, 100+x, 100, 100, 50,rgb(20,20,20));
+    Draw(FillCircle, 100+x, 250, 50, rgb(200,20,20));
+    Draw(Rect, 100+x, 350, 50,50, 20, rgb(200,20,20));
+    Draw(FillRect, 100+x, 450, 50,50, rgb(200,20,200));
+    Draw(Triangle, 500, 100, 550,100, 550,150,5,rgb(00,200,200));
+    Draw(FillTriangle, 500, 300, 550,300, 550,250,rgb(00,200,200));
+    x = (x+1)%255;
+    //Console(Sin(x*PI));
+    Console(c);
+}
