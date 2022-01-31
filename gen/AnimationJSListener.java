@@ -1,4 +1,4 @@
-// Generated from /home/sebastian/Desktop/animationJS/grammar/AnimationJS.g4 by ANTLR 4.9.2
+// Generated from C:/Users/juans/Desktop/Lenguajes de programacion/animationJS/grammar\AnimationJS.g4 by ANTLR 4.9.2
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -156,6 +156,16 @@ public interface AnimationJSListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAssigMinEq(AnimationJSParser.AssigMinEqContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AnimationJSParser#assigArr}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssigArr(AnimationJSParser.AssigArrContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AnimationJSParser#assigArr}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssigArr(AnimationJSParser.AssigArrContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AnimationJSParser#console}.
 	 * @param ctx the parse tree
@@ -386,6 +396,16 @@ public interface AnimationJSListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAnim(AnimationJSParser.AnimContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AnimationJSParser#length}.
+	 * @param ctx the parse tree
+	 */
+	void enterLength(AnimationJSParser.LengthContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AnimationJSParser#length}.
+	 * @param ctx the parse tree
+	 */
+	void exitLength(AnimationJSParser.LengthContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AnimationJSParser#system_vars}.
 	 * @param ctx the parse tree

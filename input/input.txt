@@ -24,12 +24,16 @@ function setup(){
         }
     }
     animation anim1 = Nanimation(newImage, 575,523,7);
+    bool[] arrInt = Array(10*5);
 }
 
 function animate(){
+    bool[] arrInt2 = Array(10*5);
 
+    arrInt2[0] = true;
     SetBackground(RGB(255,255,0));
     float as = 2;
+    Console(Len(as));
     Text(as+as-as, 100, 100, 20);
     float test2 = "holo";
     Draw(newImage,0,100,CANVAS_WIDTH,200);

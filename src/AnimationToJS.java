@@ -47,6 +47,11 @@ public class AnimationToJS extends AnimationJSBaseListener {
         sVars.add("while");
         sVars.add("for");
         sVars.add("if");
+        sVars.add("else");
+        sVars.add("switch");
+        sVars.add("case");
+        sVars.add("default");
+        sVars.add("Len");
         //Shapes
         sVars.add("Rect");
         sVars.add("FillRect");
@@ -116,20 +121,12 @@ public class AnimationToJS extends AnimationJSBaseListener {
                     else if (str.equals("PI")) lExpr.add("Math." + str);
                     else if (str.equals("Random")) lExpr.add("Random.get");
                     else if (str.equals("IntRandom")) lExpr.add("IntRandom.get");
+                    else if (str.equals("Len")) lExpr.add(str);
                     else lExpr.add(str);
                 } else {
                     if(varsTableFor.get(currFunction).contains(str))lExpr.add(str);
                     else if(vars.containsKey(str))lExpr.add("project." + str);
                     else lExpr.add(str);
-                    /*if (str.equals("^")) lExpr.add("**");
-                    else if (   str.equals("+") || str.equals("-") ||
-                                str.equals("*") || str.equals("/") ||
-                                str.equals("%") || str.equals("(") ||
-                                str.equals(")") || str.equals("[") ||
-                                str.equals("]") || str.equals("==")
-                    ) lExpr.add(str);
-                    else if (isNumeric(str)) lExpr.add(str);
-                    else lExpr.add("project." + str);*/
                 }
             }
         }
@@ -359,6 +356,20 @@ public class AnimationToJS extends AnimationJSBaseListener {
                             "        }\n" +
                             "    };\n" +
                             "};         \n";
+        }
+        {
+            tradJS[1] +=    "function newArray(num,startVal){\n" +
+                            "    var arr = [];\n" +
+                            "    for(var i=0;i<num;i++){\n" +
+                            "        arr.push(startVal);\n" +
+                            "    }\n" +
+                            "    return arr;\n" +
+                            "}      \n";
+        }
+        {
+            tradJS[1] +=    "function Len(array){\n" +
+                            "    return array.length;\n" +
+                            "}      \n";
         }
         {
             tradJS[2] += "//System variables                                \n";
@@ -676,45 +687,63 @@ public class AnimationToJS extends AnimationJSBaseListener {
             System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" ya existe.\n", line, col);
             errors = true;
         } else {
-            tradJS[currentCode] += printTabs() + "project." + ctx.ID().getText();
-            tradJS[currentCode] += " = ";
-            if (ctx.EQU() != null) {
-
+            if(ctx.COR_IZQ() != null){
+                tradJS[currentCode] += printTabs() + "project." + ctx.ID().getText() +" = newArray( "+trExpr(ctx.num_expr().getText())+" , ";
                 switch (ctx.dtype().getText()){
                     case "int":
-                        tradJS[currentCode] += "parseInt( ";
+                        tradJS[currentCode] += "0 ";
                         break;
                     case "float":
-                        tradJS[currentCode] += "parseFloat( ";
+                        tradJS[currentCode] += "0.0 ";
                         break;
                     case "bool":
-                        tradJS[currentCode] += "Boolean( ";
+                        tradJS[currentCode] += "false ";
                         break;
                     case "string":
-                        tradJS[currentCode] += "String( ";
+                        tradJS[currentCode] += "\"\" ";
                         break;
                 }
-                tradJS[currentCode] += trExpr(ctx.expr().getText())+" )";
+                tradJS[currentCode] +=  ")";
+                vars.put(ctx.ID().getText(), ctx.dtype().getText()+"[]");
             }
             else{
-                switch (ctx.dtype().getText()){
-                    case "int":
-                        tradJS[currentCode] += "0";
-                        break;
-                    case "float":
-                        tradJS[currentCode] += "0.0";
-                        break;
-                    case "bool":
-                        tradJS[currentCode] += "false";
-                        break;
-                    case "string":
-                        tradJS[currentCode] += "\"\"";
-                        break;
+                tradJS[currentCode] += printTabs() + "project." + ctx.ID().getText()+" = ";
+                if (ctx.EQU() != null) {
+                    switch (ctx.dtype().getText()){
+                        case "int":
+                            tradJS[currentCode] += "parseInt( ";
+                            break;
+                        case "float":
+                            tradJS[currentCode] += "parseFloat( ";
+                            break;
+                        case "bool":
+                            tradJS[currentCode] += "Boolean( ";
+                            break;
+                        case "string":
+                            tradJS[currentCode] += "String( ";
+                            break;
+                    }
+                    tradJS[currentCode] += trExpr(ctx.expr().getText())+" )";
                 }
+                else{
+                    switch (ctx.dtype().getText()){
+                        case "int":
+                            tradJS[currentCode] += "0";
+                            break;
+                        case "float":
+                            tradJS[currentCode] += "0.0";
+                            break;
+                        case "bool":
+                            tradJS[currentCode] += "false";
+                            break;
+                        case "string":
+                            tradJS[currentCode] += "\"\"";
+                            break;
+                    }
+                }
+                vars.put(ctx.ID().getText(), ctx.dtype().getText());
             }
-            vars.put(ctx.ID().getText(), ctx.dtype().getText());
         }
-
     }
 
     @Override
@@ -736,42 +765,62 @@ public class AnimationToJS extends AnimationJSBaseListener {
             errors = true;
         }
         else {
-            tradJS[currentCode] += printTabs() + "let " + ctx.ID().getText();
-            tradJS[currentCode] += " = ";
-            if (ctx.EQU() != null) {
+            if(ctx.COR_IZQ() != null){
+                tradJS[currentCode] += printTabs() + "let " + ctx.ID().getText() +" = newArray( "+trExpr(ctx.num_expr().getText())+" , ";
                 switch (ctx.dtype().getText()){
                     case "int":
-                        tradJS[currentCode] += "parseInt( ";
+                        tradJS[currentCode] += "0 ";
                         break;
                     case "float":
-                        tradJS[currentCode] += "parseFloat( ";
+                        tradJS[currentCode] += "0.0 ";
                         break;
                     case "bool":
-                        tradJS[currentCode] += "Boolean( ";
+                        tradJS[currentCode] += "false ";
                         break;
                     case "string":
-                        tradJS[currentCode] += "String( ";
+                        tradJS[currentCode] += "\"\" ";
                         break;
                 }
-                tradJS[currentCode] += trExpr(ctx.expr().getText())+" )";
+                tradJS[currentCode] +=  ") ";
+                varsTableF.get(currFunction).put(ctx.ID().getText(), ctx.dtype().getText()+"[]");
             }
-            else{
-                switch (ctx.dtype().getText()){
-                    case "int":
-                        tradJS[currentCode] += "0";
-                        break;
-                    case "float":
-                        tradJS[currentCode] += "0.0";
-                        break;
-                    case "bool":
-                        tradJS[currentCode] += "false";
-                        break;
-                    case "string":
-                        tradJS[currentCode] += "\"\"";
-                        break;
+            else {
+                tradJS[currentCode] += printTabs() + "let " + ctx.ID().getText() +" = ";
+                if (ctx.EQU() != null) {
+                    switch (ctx.dtype().getText()){
+                        case "int":
+                            tradJS[currentCode] += "parseInt( ";
+                            break;
+                        case "float":
+                            tradJS[currentCode] += "parseFloat( ";
+                            break;
+                        case "bool":
+                            tradJS[currentCode] += "Boolean( ";
+                            break;
+                        case "string":
+                            tradJS[currentCode] += "String( ";
+                            break;
+                    }
+                    tradJS[currentCode] += trExpr(ctx.expr().getText())+" )";
                 }
+                else{
+                    switch (ctx.dtype().getText()){
+                        case "int":
+                            tradJS[currentCode] += "0";
+                            break;
+                        case "float":
+                            tradJS[currentCode] += "0.0";
+                            break;
+                        case "bool":
+                            tradJS[currentCode] += "false";
+                            break;
+                        case "string":
+                            tradJS[currentCode] += "\"\"";
+                            break;
+                    }
+                }
+                varsTableF.get(currFunction).put(ctx.ID().getText(), ctx.dtype().getText());
             }
-            varsTableF.get(currFunction).put(ctx.ID().getText(), ctx.dtype().getText());
         }
     }
 
@@ -830,25 +879,33 @@ public class AnimationToJS extends AnimationJSBaseListener {
         else if(ctx.assigMinEq()!=null)ID = ctx.assigMinEq().ID().getText();
         else if(ctx.assigPlEq()!=null)ID = ctx.assigPlEq().ID().getText();
         else if(ctx.assigPlPl()!=null)ID = ctx.assigPlPl().ID().getText();
+        else if(ctx.assigArr()!=null)ID = ctx.assigArr().ID().getText();
 
         if (vars.containsKey(ID) || varsTableF.get(currFunction).containsKey(ID)) {
             if(vars.containsKey(ID))tradJS[currentCode] += printTabs() + "project." + ID;
             else tradJS[currentCode] += printTabs() + ID;
-            if (ctx.assigUsual() != null || ctx.assigPlEq() != null || ctx.assigMinEq() != null){
+            if (ctx.assigUsual() != null || ctx.assigPlEq() != null || ctx.assigMinEq() != null || ctx.assigArr() != null){
                 if(ctx.assigUsual() != null)tradJS[currentCode] +=  " = ";
                 else if(ctx.assigPlEq() != null)tradJS[currentCode] +=  " += ";
                 else if(ctx.assigMinEq() != null)tradJS[currentCode] +=  " -= ";
-                String dtype = vars.get(ID);
+                else if(ctx.assigArr() != null)tradJS[currentCode] +=  "[ "+trExpr(ctx.assigArr().num_expr().getText())+" ] = ";
+                String dtype = "";
+                if(vars.get(ID) != null)dtype = vars.get(ID) ;
+                else dtype = varsTableF.get(currFunction).get(ID) ;
                 switch (dtype){
+                    case "int[]":
                     case "int":
                         tradJS[currentCode] += "parseInt( ";
                         break;
+                    case "float[]":
                     case "float":
                         tradJS[currentCode] += "parseFloat( ";
                         break;
+                    case "bool[]":
                     case "bool":
                         tradJS[currentCode] += "Boolean( ";
                         break;
+                    case "string[]":
                     case "string":
                         tradJS[currentCode] += "String( ";
                         break;
@@ -856,6 +913,7 @@ public class AnimationToJS extends AnimationJSBaseListener {
                 if(ctx.assigUsual() != null)tradJS[currentCode] += trExpr(ctx.assigUsual().expr().getText()) + " );       \n";
                 else if(ctx.assigPlEq() != null)tradJS[currentCode] += trExpr(ctx.assigPlEq().num_expr().getText()) + " );       \n";
                 else if(ctx.assigMinEq() != null)tradJS[currentCode] += trExpr(ctx.assigMinEq().num_expr().getText()) + " );       \n";
+                else if(ctx.assigArr() != null)tradJS[currentCode] += trExpr(ctx.assigArr().num_expr().getText()) + " );       \n";
             }
             else{
                 tradJS[currentCode] += "++;     \n";
@@ -884,6 +942,35 @@ public class AnimationToJS extends AnimationJSBaseListener {
     @Override
     public void exitAssignation(AnimationJSParser.AssignationContext ctx) {
     }
+
+    @Override public void enterLength(AnimationJSParser.LengthContext ctx) {
+        if(vars.containsKey(ctx.ID().getText())){
+            String dtype = vars.get(ctx.ID().getText());
+            if (!dtype.equals("int[]") && !dtype.equals("float[]") && !dtype.equals("string[]") && !dtype.equals("bool[]")){
+                int line = ctx.ID().getSymbol().getLine();
+                int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
+                System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no es un arreglo.\n", line, col);
+                errors = true;
+            }
+        }
+        else if(varsTableF.get(currFunction).containsKey(ctx.ID().getText())){
+            String dtype = varsTableF.get(currFunction).get(ctx.ID().getText());
+            if (!dtype.equals("int[]") && !dtype.equals("float[]") && !dtype.equals("string[]") && !dtype.equals("bool[]")){
+                int line = ctx.ID().getSymbol().getLine();
+                int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
+                System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no es un arreglo.\n", line, col);
+                errors = true;
+            }
+        }
+        else{
+            int line = ctx.ID().getSymbol().getLine();
+            int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
+            System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no existe.\n", line, col);
+            errors = true;
+        }
+    }
+
+    @Override public void exitLength(AnimationJSParser.LengthContext ctx) { }
 
     @Override
     public void enterConsole(AnimationJSParser.ConsoleContext ctx) {

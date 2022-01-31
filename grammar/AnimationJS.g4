@@ -44,20 +44,26 @@ command             : declarationL
                     ;
 
 setCanvas           : SETCANVAS PAR_IZQ DT_INT COMMA DT_INT PAR_DER PYC;
-declarationG        : dtype ID (EQU expr)? PYC;
+declarationG        : dtype ID (EQU expr)? PYC
+                    | dtype COR_IZQ COR_DER ID EQU ARRAY PAR_IZQ num_expr PAR_DER PYC
+                    ;
 
-declarationL        : dtype ID (EQU expr)? PYC;
+declarationL        : dtype ID (EQU expr)? PYC
+                    | dtype COR_IZQ COR_DER ID EQU ARRAY PAR_IZQ num_expr PAR_DER PYC
+                    ;
 
 assignation         : assigUsual PYC
                     | assigPlPl PYC
                     | assigPlEq PYC
                     | assigMinEq PYC
+                    | assigArr PYC
                     ;
 
 assigUsual          : ID EQU expr;
 assigPlPl           : ID SUMA SUMA;
 assigPlEq           : ID SUMA EQU num_expr;
 assigMinEq          : ID RESTA EQU num_expr;
+assigArr            : ID COR_IZQ num_expr COR_DER EQU expr;
 
 console             : CONSOLE PAR_IZQ expr (COMMA expr)* PAR_DER PYC;
 setBackground       : SETBACKGROUND PAR_IZQ rgb PAR_DER PYC;
@@ -112,6 +118,8 @@ declarationAnim     : ANIMATION ID EQU NANIMATION PAR_IZQ ID COMMA num_expr COMM
 
 anim                : ANIM PAR_IZQ ID COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr PAR_DER PYC;
 
+length              : LEN PAR_IZQ ID PAR_DER;
+
 //Funciones
 FUNCTION        : 'function';
 SETUP           : 'setup';
@@ -138,6 +146,8 @@ DEFAULT         : 'default';
 ANIMATION       : 'animation';
 NANIMATION      : 'Nanimation';
 ANIM            : 'Anim';
+ARRAY           : 'Array';
+LEN             : 'Len';
 
 
 //Objects
@@ -217,6 +227,7 @@ num_expr        : num_expr oper_num num_expr
                 | PI
                 | RANDOM PAR_IZQ num_expr COMMA num_expr PAR_DER
                 | INTRANDOM PAR_IZQ num_expr COMMA num_expr PAR_DER
+                | length
                 ;
 
 expr            : expr oper_num expr
@@ -237,6 +248,7 @@ expr            : expr oper_num expr
                 | NEGACION ID
                 | tf_log
                 | NEGACION tf_log
+                | length
                 ;
 
 

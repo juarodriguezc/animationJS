@@ -196,6 +196,16 @@ class WaitClass {
         }
     };
 };         
+function newArray(num,startVal){
+    var arr = [];
+    for(var i=0;i<num;i++){
+        arr.push(startVal);
+    }
+    return arr;
+}      
+function Len(array){
+    return array.length;
+}      
 
 //System variables                                
 const project = new Project();                    
@@ -260,13 +270,17 @@ function setup(){
 		}          
 	}          
 	project.anim1 = new AnimationClass( project.newImage, 575, 523, 7);    
+	project.arrInt = newArray( 10*5 , false );       
 	animate();                         
 };                         
 
 function animate(){          
+	let arrInt2 = newArray( 10*5 , false ) ;       
+	arrInt2[ 0 ] = Boolean( 0 );       
 	ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);      
 	Background.draw("rgb("+(255)+", "+(255)+", "+(0)+")");      
 	let as = parseFloat( 2 );       
+	console.log(Len(as));     
 	Text.write(as+as-as, 100, 100, 20, undefined, undefined, undefined);     
 	let test2 = parseFloat( "holo" );       
 	ctx.drawImage( project.newImage, 0, 100, CANVAS_WIDTH, 200);     

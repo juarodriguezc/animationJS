@@ -1,4 +1,4 @@
-// Generated from /home/sebastian/Desktop/animationJS/grammar/AnimationJS.g4 by ANTLR 4.9.2
+// Generated from C:/Users/juans/Desktop/Lenguajes de programacion/animationJS/grammar\AnimationJS.g4 by ANTLR 4.9.2
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -99,6 +99,12 @@ public interface AnimationJSVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAssigMinEq(AnimationJSParser.AssigMinEqContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link AnimationJSParser#assigArr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssigArr(AnimationJSParser.AssigArrContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AnimationJSParser#console}.
 	 * @param ctx the parse tree
@@ -237,6 +243,12 @@ public interface AnimationJSVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAnim(AnimationJSParser.AnimContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link AnimationJSParser#length}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLength(AnimationJSParser.LengthContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AnimationJSParser#system_vars}.
 	 * @param ctx the parse tree
