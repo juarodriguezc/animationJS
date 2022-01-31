@@ -79,6 +79,7 @@ draw                : DRAW PAR_IZQ CIRCLE COMMA num_expr COMMA num_expr COMMA nu
                     | DRAW PAR_IZQ FILLRECT COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr (COMMA rgb)? PAR_DER PYC
                     | DRAW PAR_IZQ TRIANGLE COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr (COMMA num_expr)?  (COMMA rgb)? PAR_DER PYC
                     | DRAW PAR_IZQ FILLTRIANGLE COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr (COMMA rgb)? PAR_DER PYC
+                    | DRAW PAR_IZQ LINE COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr (COMMA num_expr)? (COMMA rgb)? PAR_DER PYC
                     | DRAW PAR_IZQ ID COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr PAR_DER PYC
                     | DRAW PAR_IZQ ID COR_IZQ num_expr COR_DER COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr PAR_DER PYC
                     ;
@@ -142,7 +143,7 @@ HIDECURSOR      : 'HideCursor';
 IF              : 'if';
 ELSE            : 'else';
 WHILE           : 'while';
-BREAK           : 'Break';
+BREAK           : 'break';
 WAIT            : 'Wait';
 FOR             : 'for';
 INT             : 'int';
@@ -165,6 +166,7 @@ RECT            : 'Rect';
 FILLRECT        : 'FillRect';
 TRIANGLE        : 'Triangle';
 FILLTRIANGLE    : 'FillTriangle';
+LINE            : 'Line';
 
 
 //Vars
@@ -173,6 +175,7 @@ system_vars     : KEYRELEASED
                 | MOUSEX
                 | MOUSEY
                 | CLICK
+                | MOUSEPRESSED
                 | MOUSEXCLICK
                 | MOUSEYCLICK
                 | FRAMES
@@ -186,6 +189,7 @@ KEYPRESSED      : 'KEYPRESSED';
 MOUSEX          : 'MOUSEX';
 MOUSEY          : 'MOUSEY';
 CLICK           : 'CLICK';
+MOUSEPRESSED    : 'MOUSEPRESSED';
 MOUSEXCLICK     : 'MOUSEXCLICK';
 MOUSEYCLICK     : 'MOUSEYCLICK';
 FRAMES          : 'FRAMES';

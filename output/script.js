@@ -103,7 +103,7 @@ class FillTriangleClass {
     constructor() {
 
     }
-    draw(x1, y1, x2, y2, x3, y3, borderW = 1, color = "rgb(0,0,0)") {
+    draw(x1, y1, x2, y2, x3, y3, color = "rgb(0,0,0)") {
         ctx.save();
         ctx.beginPath();
         ctx.fillStyle = color;
@@ -113,7 +113,23 @@ class FillTriangleClass {
         ctx.fill();
         ctx.restore();
     };
-};     
+};         
+class LineClass {
+    constructor() {
+
+    }
+    draw(x1, y1, x2, y2, lineW = 1, color = "rgb(0,0,0)") {
+        ctx.save();
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = lineW;
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        ctx.closePath();
+        ctx.restore();
+    };
+};         
 class AnimationClass {
     constructor(playerImage, spriteWidth, spriteHeight, nSprites, yPosition=0) {
         this.x = 0;
@@ -155,7 +171,7 @@ class AnimationClass {
     };
     draw() {
         let position = this.frame % this.nSprites;
-        ctx.fillText("Position: " + position, 10, 10);
+        //ctx.fillText("Position: " + position, 10, 10);
         ctx.drawImage(this.playerImage, position * this.spriteWidth, this.yPosition * this.spriteHeight, this.spriteWidth, this.spriteHeight, this.x, this.y, this.width, this.height);
     };
 };     
@@ -211,6 +227,17 @@ function DrawImg(src, x, y, width, height) {
     img.src = src;
     ctx.drawImage(img, x, y, width, height);
 }      
+function CheckClick(){
+    if(MOUSEPRESSED){
+        MOUSECOUNT ++;
+        if(MOUSECOUNT == 1){
+            CLICK = true;
+        }
+        else{
+            CLICK = false;
+        } 
+    }
+}      
 
 //System variables                                
 const project = new Project();                    
@@ -226,6 +253,7 @@ const Circle = new CircleClass();
 const FillCircle = new FillCircleClass();         
 const Triangle = new TriangleClass();             
 const FillTriangle = new FillTriangleClass();     
+const Line = new LineClass();     
 //Keyboard vars                                   
 let KEYPRESSED = '';                              
 let KEYRELEASED = '';                             
@@ -233,8 +261,10 @@ let KEYRELEASED = '';
 let MOUSEX = '';                                  
 let MOUSEY = '';                                  
 let CLICK = false;                                
+let MOUSEPRESSED = false;                         
 let MOUSEXCLICK = '';                             
 let MOUSEYCLICK = '';                             
+let MOUSECOUNT = 0;;                              
 let FRAMES = 0                                    
 const A = "A";                                  
 const S = "S";                                  
@@ -251,77 +281,56 @@ const RIGHT = "RIGHT";
 setup();                   
 function setup(){          
 	project.state = parseInt( 0 );       
-	project.letterJ = parseInt( 0 );       
-	project.letterS = parseInt( 1 );       
-	project.endPos = newArray( 2 , 0 );       
-	project.endPos[0] = parseInt( 550 );       
-	project.endPos[1] = parseInt( 350 );       
-	project.startPos = newArray( 2 , 0 );       
-	project.startPos[0] = parseInt( -100 );       
-	project.startPos[1] = parseInt( -250 );       
-	project.cont = parseInt( 0 );       
+	project.xPos = parseInt( 100 );       
+	project.yPos = parseInt( 300 );       
+	project.paso = parseInt( 5 );       
+	project.background = new Image();      
+	project.background.src = "/assets/background.jpg";     
+	project.idle_dog = new Image();      
+	project.idle_dog.src = "/assets/dog_idle.png";     
+	project.idleAnim = new AnimationClass( project.idle_dog, 575, 523, 7);    
+	project.walk_dog = new Image();      
+	project.walk_dog.src = "/assets/dog_walk.png";     
+	project.walkAnim = new AnimationClass( project.walk_dog, 575, 523, 9);    
+	project.sit_dog = new Image();      
+	project.sit_dog.src = "/assets/dog_sit.png";     
+	project.sitAnim = new AnimationClass( project.sit_dog, 575, 523, 5);    
 	animate();                         
 };                         
 
 function animate(){          
-	if( project.state==0 ){    
-		ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);      
-		Background.draw("rgb("+(247)+", "+(223)+", "+(30)+")");      
-		Text.write("J", 160, project.startPos[0], 350, 600, "rgb("+(0)+", "+(0)+", "+(0)+")", "Arial");     
-		Text.write("S", project.startPos[1], 550, 350, 600, "rgb("+(0)+", "+(0)+", "+(0)+")", "Arial");     
-		if( project.startPos[1]<project.endPos[1]&&project.letterS==1 ){    
-			project.startPos[1] = parseInt( project.startPos[1]+5 );       
+	ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);      
+	Background.draw("rgb("+(255)+", "+(255)+", "+(255)+")");      
+	ctx.drawImage( project.background, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);     
+	if( KEYPRESSED==RIGHT ){    
+		project.state = parseInt( 1 );       
+		if( project.xPos<700 ){    
+			project.xPos += parseInt( project.paso );       
 		}    
 		else{    
-			project.letterS = parseInt( 0 );       
-			project.letterJ = parseInt( 1 );       
-		}    
-		if( project.startPos[0]<project.endPos[0]&&project.letterJ==1 ){    
-			project.startPos[0] = parseInt( project.startPos[0]+5 );       
-		}    
-		else{    
-			project.letterJ = parseInt( 0 );       
-		}    
-		if( KEYPRESSED==SPACE&&project.letterJ==0&&project.letterS==0 ){    
-			project.state = parseInt( 1 );       
+			project.xPos = parseInt( -200 );       
 		}    
 	}    
-	else if( project.state==1 ){    
-		ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);      
-		Background.draw("rgb("+(2)+", "+(22)+", "+(49)+")");      
+	else if( KEYPRESSED==DOWN ){    
 		project.state = parseInt( 2 );       
 	}    
-	else if( project.state==2 ){    
-		Wait.wait( 3000 );      
-		project.state = parseInt( 3 );       
+	else{    
+		project.state = parseInt( 0 );       
 	}    
-	else if( project.state==3 ){    
-		ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);      
-		Background.draw("rgb("+(2)+", "+(22)+", "+(49)+")");      
-		Text.write("Animation", 20, 170, 90, 600, "rgb("+(project.cont+2)+", "+(project.cont+22)+", "+(project.cont+49)+")", "century gothic");     
-		FillCircle.draw(152, 108, 10,"rgb("+(2)+", "+(22)+", "+(49)+")");     
-		FillCircle.draw(345, 108, 10,"rgb("+(2)+", "+(22)+", "+(49)+")");     
-		if( project.cont<255-49 ){    
-			project.cont += parseInt( 3 );       
-		}    
-		else{    
-			project.state = parseInt( 4 );       
-		}    
-	}    
-	else if( project.state==4 ){    
-		ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);      
-		Background.draw("rgb("+(2)+", "+(22)+", "+(49)+")");      
-		Text.write("Animation", 20, 170, 90, 600, "rgb("+(255)+", "+(255)+", "+(255)+")", "century gothic");     
-		Text.write("J", 160, project.startPos[0], 350, 600, "rgb("+(255)+", "+(255)+", "+(255)+")", "Arial");     
-		Text.write("S", project.startPos[1], 550, 350, 600, "rgb("+(255)+", "+(255)+", "+(255)+")", "Arial");     
-		FillCircle.draw(152, 108, 10,"rgb("+(2)+", "+(22)+", "+(49)+")");     
-		FillCircle.draw(345, 108, 10,"rgb("+(2)+", "+(22)+", "+(49)+")");     
-		project.state = parseInt( 5 );       
-	}    
-	else if( project.state==5 ){    
-		FillCircle.draw(152+5*Math.sin(FRAMES), 95+5*Math.cos(FRAMES), 7,"rgb("+(IntRandom.get(50,255))+", "+(IntRandom.get(50,255))+", "+(IntRandom.get(50,255))+")");     
-		FillCircle.draw(345+5*Math.sin(FRAMES), 95+5*Math.cos(FRAMES), 7,"rgb("+(IntRandom.get(50,255))+", "+(IntRandom.get(50,255))+", "+(IntRandom.get(50,255))+")");     
-	}    
+	switch( project.state ){    
+		case 0:          
+			project.idleAnim.animate( project.xPos, project.yPos, 200, 200, 500 );        
+			break;     
+		case 1:          
+			project.walkAnim.animate( project.xPos, project.yPos, 200, 200, 500 );        
+			break;     
+		case 2:          
+			project.sitAnim.animate( project.xPos, project.yPos+5, 200, 200, 400 );        
+			break;     
+		default:             
+			project.idleAnim.animate( project.xPos, project.yPos, 200, 200, 500 );        
+	}          
+	CheckClick();      
 	FRAMES++;      
 	requestAnimationFrame(animate);      
 }              
@@ -425,12 +434,14 @@ window.addEventListener('mousemove', (e) => {
     MOUSEX = e.clientX - CanvasPosition.x;
     MOUSEY = e.clientY - CanvasPosition.y;
 });        
-window.addEventListener('mousedown', (e) => {
-    CLICK = true;
+ window.addEventListener('mousedown', (e) => {
+    MOUSEPRESSED = true;
     MOUSEXCLICK = e.clientX - CanvasPosition.x;
     MOUSEYCLICK = e.clientY - CanvasPosition.y;
 });        
 window.addEventListener('mouseup', (e) => {
     CLICK = false;
+    MOUSECOUNT = 0;
+    MOUSEPRESSED = false;
 });        
 

@@ -37,7 +37,6 @@ function setup(){
     startPos[0] = -100;
     startPos[1] = -250;
     int cont = 0;
-
 }
 
 function animate(){
@@ -69,12 +68,14 @@ function animate(){
         state = 2;
     }
     else if(state == 2){
-        Wait(30);
+        Wait(3000);
         state = 3;
     }
     else if(state == 3){
         SetBackground(RGB(2,22,49));
         Text("Animation",20,170,90,600,RGB(cont+2,cont+22,cont+49),"century gothic");
+        Draw(FillCircle,152, 108, 10,RGB(2,22,49));
+        Draw(FillCircle,345, 108, 10,RGB(2,22,49));
         if(cont<255-49){
             cont+=3;
         }
@@ -84,12 +85,178 @@ function animate(){
     }
     else if(state == 4){
         SetBackground(RGB(2,22,49));
-        Draw(FillCircle,CANVAS_WIDTH/2 + FRAMES*Sin(sum), CANVAS_HEIGHT/2+FRAMES*Cos(sum), 10,RGB(IntRandom(50,255),IntRandom(50,255),IntRandom(50,255)));
         Text("Animation",20,170,90,600,RGB(255,255,255),"century gothic");
         Text("J",160,startPos[0],350,600,RGB(255,255,255),"Arial");
         Text("S",startPos[1],550,350,600,RGB(255,255,255),"Arial");
+        Draw(FillCircle,152, 108, 10,RGB(2,22,49));
+        Draw(FillCircle,345, 108, 10,RGB(2,22,49));
+        state = 5;
     }
+    else if(state == 5){
+        
+        Draw(FillCircle,152 + 5*Sin(FRAMES), 95+5*Cos(FRAMES), 7,RGB(IntRandom(50,255),IntRandom(50,255),IntRandom(50,255)));
+        Draw(FillCircle,345 + 5*Sin(FRAMES), 95+5*Cos(FRAMES), 7,RGB(IntRandom(50,255),IntRandom(50,255),IntRandom(50,255)));
+        
+    }
+}
 
-    Draw(FillCircle,CANVAS_WIDTH/2 + 5*Sin(sum), CANVAS_HEIGHT/2+5*Cos(sum), 10,RGB(IntRandom(50,255),IntRandom(50,255),IntRandom(50,255)));
-    Console(KEYPRESSED);
+//Ejemplo 4     -       Paint
+function setup(){
+    SetCanvas(600,600);
+    SetBackground(RGB(255,255,255));
+    int mouseX = 0;
+    int mouseY = 0;
+    bool canDraw = false;
+    int rCol = 0;
+    int gCol = 0;
+    int bCol = 0;
+    int cursorSize = 1;
+    //Canvas 
+    Draw(FillRect,0,0,CANVAS_WIDTH,100,RGB(245,246,247));
+    Draw(FillRect,0,100,CANVAS_WIDTH,CANVAS_HEIGHT-100,RGB(201,211,236));
+    Draw(FillRect,20,120,CANVAS_WIDTH-40,CANVAS_HEIGHT-140,RGB(255,255,255));
+    //Option 1
+    Draw(FillRect,40,20,30,30,RGB(255,0,0));
+    Text("A",42,80,30,600);
+    //Option 2
+    Draw(FillRect,110,20,30,30,RGB(0,255,0));
+    Text("S",112,80,30,600);
+    //Option 3
+    Draw(FillRect,180,20,30,30,RGB(0,0,255));
+    Text("D",182,80,30,600);
+    //Option 4
+    Draw(FillRect,250,20,30,30,RGB(0,0,0));
+    Text("W",251,80,30,600);
+    //Option 5
+    Draw(FillRect,320,20,30,30,RGB(255,255,255));
+    Draw(Rect,320,20,30,30);
+    Text("DEL",310,80,30,600);
+    //Option 6
+    Draw(FillRect,440,20,30,30,RGB(255,255,255));
+    Draw(Rect,440,20,30,30);
+    Draw(FillCircle,455,35,5,RGB(0,0,0));
+    Text("^",440,95,50,600);
+    //Option 7
+    Draw(FillRect,500,20,30,30,RGB(255,255,255));
+    Draw(Rect,500,20,30,30);
+    Draw(FillCircle,515,35,10,RGB(0,0,0));
+    Text("v",505,80,40,600);
+    //Option 8
+    Draw(FillRect,548,56,43,40,RGB(254,186,187));
+    Text("Clear",550,70,15,600);
+    Text("F5",555,90,20,400);
+
+}
+
+function animate(){
+    switch (KEYPRESSED){
+        case A:
+            rCol = 255;
+            gCol = 0;
+            bCol = 0;
+            break;
+        case S:
+            rCol = 0;
+            gCol = 255;
+            bCol = 0;
+            break;
+        case D:
+            rCol = 0;
+            gCol = 0;
+            bCol = 255;
+            break;
+        case W:
+            rCol = 0;
+            gCol = 0;
+            bCol = 0;
+            break;
+        case BACKSPACE:
+            rCol = 255;
+            gCol = 255;
+            bCol = 255;
+            break;
+        case UP:
+            if(cursorSize < 400){
+                cursorSize++;
+            }
+            break;
+        case DOWN:
+            if(cursorSize > 1){
+                cursorSize-=1;
+            }
+            break;
+    }
+    //Settings drawing
+    if(CLICK){
+        canDraw = true;
+        mouseX = MOUSEXCLICK;
+        mouseY = MOUSEYCLICK;
+    }
+    if(! (MOUSEPRESSED)){
+        canDraw = false;
+    }
+    
+    if(canDraw){
+        Draw(Line, mouseX, mouseY, MOUSEX, MOUSEY, cursorSize, RGB(rCol,gCol,bCol));
+        mouseX = MOUSEX;
+        mouseY = MOUSEY;
+    }
+}
+
+
+
+//Ejemplo 5     -       SpriteAnimation
+function setup(){
+    SetCanvas(600,600);
+    //0 - idle, 1 - walking, 2 - sit
+    int state = 0;
+    int xPos = 100;
+    int yPos = 300;
+    int paso = 5;
+    //Load background
+    img background = Src("/assets/background.jpg");
+    //Load dog images
+    //Idle
+    img idle_dog = Src("/assets/dog_idle.png");
+    animation idleAnim = Nanimation(idle_dog, 575, 523, 7);
+    //Walk
+    img walk_dog = Src("/assets/dog_walk.png");
+    animation walkAnim = Nanimation(walk_dog, 575, 523, 9);
+    //Sit
+    img sit_dog = Src("/assets/dog_sit.png");
+    animation sitAnim = Nanimation(sit_dog, 575, 523, 5);
+}
+
+function animate(){
+    //Draw Background
+    SetBackground(RGB(255,255,255));
+    Draw(background,0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+    if(KEYPRESSED == RIGHT){
+        state = 1;
+        if(xPos<700){
+            xPos += paso;
+        }
+        else{
+            xPos = -200;
+        }
+    }
+    else if(KEYPRESSED == DOWN){
+        state = 2;
+    }
+    else{
+        state = 0;
+    }
+    switch (state){
+        case 0:
+            Anim(idleAnim, xPos, yPos, 200, 200, 500);
+            break;
+        case 1:
+            Anim(walkAnim, xPos, yPos, 200, 200, 500);
+            break;
+        case 2:
+            Anim(sitAnim, xPos, yPos+5, 200, 200, 400);
+            break;
+        default:
+            Anim(idleAnim, xPos, yPos, 200, 200, 500);
+    }
 }

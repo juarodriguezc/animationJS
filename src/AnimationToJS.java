@@ -13,6 +13,7 @@ public class AnimationToJS extends AnimationJSBaseListener {
     HashMap<String, String> vars = new HashMap<>();
     HashMap<String, HashMap<String, String>> varsTableF = new HashMap<>();
     HashMap<String, List<String>> varsTableFor = new HashMap<>();
+    List<String> errorList = new LinkedList<>();
     int currentCode = 0;
     int width = 300;
     int height = 300;
@@ -42,7 +43,7 @@ public class AnimationToJS extends AnimationJSBaseListener {
         sVars.add("HideCursor");
         sVars.add("true");
         sVars.add("false");
-        sVars.add("Break");
+        sVars.add("break");
         sVars.add("Wait");
         sVars.add("while");
         sVars.add("for");
@@ -72,6 +73,7 @@ public class AnimationToJS extends AnimationJSBaseListener {
         sVars.add("MOUSEX");
         sVars.add("MOUSEY");
         sVars.add("CLICK");
+        sVars.add("MOUSEPRESSED");
         sVars.add("MOUSEXCLICK");
         sVars.add("MOUSEYCLICK");
         sVars.add("CANVAS_WIDTH");
@@ -232,40 +234,58 @@ public class AnimationToJS extends AnimationJSBaseListener {
                     "};     \n";
         }
         {
-            tradJS[1] += "class TriangleClass {\n" +
-                    "    constructor() {\n" +
-                    "\n" +
-                    "    }\n" +
-                    "    draw(x1, y1, x2, y2, x3, y3, borderW = 1, color = \"rgb(0,0,0)\") {\n" +
-                    "        ctx.save();\n" +
-                    "        ctx.beginPath();\n" +
-                    "        ctx.lineWidth = borderW;\n" +
-                    "        ctx.strokeStyle = color;\n" +
-                    "        ctx.moveTo(x1, y1);\n" +
-                    "        ctx.lineTo(x2, y2);\n" +
-                    "        ctx.lineTo(x3, y3);\n" +
-                    "        ctx.closePath();\n" +
-                    "        ctx.stroke();\n" +
-                    "        ctx.restore();\n" +
-                    "    };\n" +
-                    "};     \n";
+            tradJS[1] +=    "class TriangleClass {\n" +
+                            "    constructor() {\n" +
+                            "\n" +
+                            "    }\n" +
+                            "    draw(x1, y1, x2, y2, x3, y3, borderW = 1, color = \"rgb(0,0,0)\") {\n" +
+                            "        ctx.save();\n" +
+                            "        ctx.beginPath();\n" +
+                            "        ctx.lineWidth = borderW;\n" +
+                            "        ctx.strokeStyle = color;\n" +
+                            "        ctx.moveTo(x1, y1);\n" +
+                            "        ctx.lineTo(x2, y2);\n" +
+                            "        ctx.lineTo(x3, y3);\n" +
+                            "        ctx.closePath();\n" +
+                            "        ctx.stroke();\n" +
+                            "        ctx.restore();\n" +
+                            "    };\n" +
+                            "};     \n";
         }
         {
-            tradJS[1] += "class FillTriangleClass {\n" +
-                    "    constructor() {\n" +
-                    "\n" +
-                    "    }\n" +
-                    "    draw(x1, y1, x2, y2, x3, y3, borderW = 1, color = \"rgb(0,0,0)\") {\n" +
-                    "        ctx.save();\n" +
-                    "        ctx.beginPath();\n" +
-                    "        ctx.fillStyle = color;\n" +
-                    "        ctx.moveTo(x1, y1);\n" +
-                    "        ctx.lineTo(x2, y2);\n" +
-                    "        ctx.lineTo(x3, y3);\n" +
-                    "        ctx.fill();\n" +
-                    "        ctx.restore();\n" +
-                    "    };\n" +
-                    "};     \n";
+            tradJS[1] +=    "class FillTriangleClass {\n" +
+                            "    constructor() {\n" +
+                            "\n" +
+                            "    }\n" +
+                            "    draw(x1, y1, x2, y2, x3, y3, color = \"rgb(0,0,0)\") {\n" +
+                            "        ctx.save();\n" +
+                            "        ctx.beginPath();\n" +
+                            "        ctx.fillStyle = color;\n" +
+                            "        ctx.moveTo(x1, y1);\n" +
+                            "        ctx.lineTo(x2, y2);\n" +
+                            "        ctx.lineTo(x3, y3);\n" +
+                            "        ctx.fill();\n" +
+                            "        ctx.restore();\n" +
+                            "    };\n" +
+                            "};         \n";
+        }
+        {
+            tradJS[1] +=    "class LineClass {\n" +
+                            "    constructor() {\n" +
+                            "\n" +
+                            "    }\n" +
+                            "    draw(x1, y1, x2, y2, lineW = 1, color = \"rgb(0,0,0)\") {\n" +
+                            "        ctx.save();\n" +
+                            "        ctx.beginPath();\n" +
+                            "        ctx.strokeStyle = color;\n" +
+                            "        ctx.lineWidth = lineW;\n" +
+                            "        ctx.moveTo(x1, y1);\n" +
+                            "        ctx.lineTo(x2, y2);\n" +
+                            "        ctx.stroke();\n" +
+                            "        ctx.closePath();\n" +
+                            "        ctx.restore();\n" +
+                            "    };\n" +
+                            "};         \n";
         }
         {
             tradJS[1] += "class AnimationClass {\n" +
@@ -309,7 +329,7 @@ public class AnimationToJS extends AnimationJSBaseListener {
                     "    };\n" +
                     "    draw() {\n" +
                     "        let position = this.frame % this.nSprites;\n" +
-                    "        ctx.fillText(\"Position: \" + position, 10, 10);\n" +
+                    "        //ctx.fillText(\"Position: \" + position, 10, 10);\n" +
                     "        ctx.drawImage(this.playerImage, position * this.spriteWidth, this.yPosition * this.spriteHeight, this.spriteWidth, this.spriteHeight, this.x, this.y, this.width, this.height);\n" +
                     "    };\n" +
                     "};     \n";
@@ -379,6 +399,19 @@ public class AnimationToJS extends AnimationJSBaseListener {
                             "}      \n";
         }
         {
+            tradJS[1] +=    "function CheckClick(){\n" +
+                            "    if(MOUSEPRESSED){\n" +
+                            "        MOUSECOUNT ++;\n" +
+                            "        if(MOUSECOUNT == 1){\n" +
+                            "            CLICK = true;\n" +
+                            "        }\n" +
+                            "        else{\n" +
+                            "            CLICK = false;\n" +
+                            "        } \n" +
+                            "    }\n" +
+                            "}      \n";
+        }
+        {
             tradJS[2] += "//System variables                                \n";
             tradJS[2] += "const project = new Project();                    \n";
             tradJS[2] += "const Background = new BackgroundClass();         \n";
@@ -393,6 +426,7 @@ public class AnimationToJS extends AnimationJSBaseListener {
             tradJS[2] += "const FillCircle = new FillCircleClass();         \n";
             tradJS[2] += "const Triangle = new TriangleClass();             \n";
             tradJS[2] += "const FillTriangle = new FillTriangleClass();     \n";
+            tradJS[2] += "const Line = new LineClass();     \n";
             tradJS[2] += "//Keyboard vars                                   \n";
             tradJS[2] += "let KEYPRESSED = '';                              \n";
             tradJS[2] += "let KEYRELEASED = '';                             \n";
@@ -400,8 +434,10 @@ public class AnimationToJS extends AnimationJSBaseListener {
             tradJS[2] += "let MOUSEX = '';                                  \n";
             tradJS[2] += "let MOUSEY = '';                                  \n";
             tradJS[2] += "let CLICK = false;                                \n";
+            tradJS[2] += "let MOUSEPRESSED = false;                         \n";
             tradJS[2] += "let MOUSEXCLICK = '';                             \n";
             tradJS[2] += "let MOUSEYCLICK = '';                             \n";
+            tradJS[2] += "let MOUSECOUNT = 0;;                              \n";
             tradJS[2] += "let FRAMES = 0                                    \n";
             tradJS[2] += "const A = \"A\";                                  \n";
             tradJS[2] += "const S = \"S\";                                  \n";
@@ -525,11 +561,11 @@ public class AnimationToJS extends AnimationJSBaseListener {
             tradJS[6] +=    "window.addEventListener('mousemove', (e) => {\n" +
                             "    MOUSEX = e.clientX - CanvasPosition.x;\n" +
                             "    MOUSEY = e.clientY - CanvasPosition.y;\n" +
-                            "});        \n";
+                            "});        \n ";
         }
         {
             tradJS[6] +=    "window.addEventListener('mousedown', (e) => {\n" +
-                            "    CLICK = true;\n" +
+                            "    MOUSEPRESSED = true;\n" +
                             "    MOUSEXCLICK = e.clientX - CanvasPosition.x;\n" +
                             "    MOUSEYCLICK = e.clientY - CanvasPosition.y;\n" +
                             "});        \n";
@@ -537,6 +573,8 @@ public class AnimationToJS extends AnimationJSBaseListener {
         {
             tradJS[6] +=    "window.addEventListener('mouseup', (e) => {\n" +
                             "    CLICK = false;\n" +
+                            "    MOUSECOUNT = 0;\n" +
+                            "    MOUSEPRESSED = false;\n" +
                             "});        \n";
         }
     }
@@ -599,8 +637,6 @@ public class AnimationToJS extends AnimationJSBaseListener {
             }
         }
         {
-            System.out.println(tradJS[3]);
-            System.out.println(tradJS[4]);
             for (String str : tradJS) {
                 tradPart[2] += str + "\n";
             }
@@ -613,15 +649,16 @@ public class AnimationToJS extends AnimationJSBaseListener {
                 e.printStackTrace();
             }
         }
-        System.out.println("\n\n\n");
         if (errors) {
             System.out.println("Proyecto creado con posibles errores semánticos");
             System.out.println("La ejecución del programa puede no ser la esperada.");
+            System.out.println("Los errores encontrados son:");
+            for (String error:errorList) {
+                System.err.printf(error);
+            }
         } else {
             System.out.println("Proyecto creado correctamente.");
         }
-        //System.out.println(vars);
-        //System.out.println(varsTableF);
     }
 
 
@@ -669,6 +706,7 @@ public class AnimationToJS extends AnimationJSBaseListener {
 
     @Override
     public void exitAnimate(AnimationJSParser.AnimateContext ctx) {
+        tradJS[currentCode] += printTabs() + "CheckClick();      \n";
         tradJS[currentCode] += printTabs() + "FRAMES++;      \n";
         tradJS[currentCode] += printTabs() + "requestAnimationFrame(animate);      \n";
         tabs -= 1;
@@ -691,7 +729,8 @@ public class AnimationToJS extends AnimationJSBaseListener {
         if (vars.containsKey(ctx.ID().getText())) {
             int line = ctx.ID().getSymbol().getLine();
             int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
-            System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" ya existe.\n", line, col);
+            //System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" ya existe.\n", line, col);
+            errorList.add(String.format("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" ya existe.\n",line, col));
             errors = true;
         } else {
             if(ctx.COR_IZQ() != null){
@@ -762,13 +801,15 @@ public class AnimationToJS extends AnimationJSBaseListener {
         if (vars.containsKey(ctx.ID().getText())) {
             int line = ctx.ID().getSymbol().getLine();
             int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
-            System.err.printf("<%d:%d> Error semantico, la variable GLOBAL con nombre \"" + ctx.ID().getText() + "\" ya existe.\n", line, col);
+            //System.err.printf("<%d:%d> Error semantico, la variable GLOBAL con nombre \"" + ctx.ID().getText() + "\" ya existe.\n", line, col);
+            errorList.add(String.format("<%d:%d> Error semantico, la variable GLOBAL con nombre \"" + ctx.ID().getText() + "\" ya existe.\n", line, col));
             errors = true;
         }
         else if(varsTableF.get(currFunction).containsKey(ctx.ID().getText())){
             int line = ctx.ID().getSymbol().getLine();
             int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
-            System.err.printf("<%d:%d> Error semantico, la variable LOCAL con nombre \"" + ctx.ID().getText() + "\" ya existe.\n", line, col);
+            //System.err.printf("<%d:%d> Error semantico, la variable LOCAL con nombre \"" + ctx.ID().getText() + "\" ya existe.\n", line, col);
+            errorList.add(String.format("<%d:%d> Error semantico, la variable LOCAL con nombre \"" + ctx.ID().getText() + "\" ya existe.\n", line, col));
             errors = true;
         }
         else {
@@ -839,7 +880,8 @@ public class AnimationToJS extends AnimationJSBaseListener {
         if (vars.containsKey(ctx.ID().getText())) {
             int line = ctx.ID().getSymbol().getLine();
             int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
-            System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" ya existe.\n", line, col);
+            //System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" ya existe.\n", line, col);
+            errorList.add(String.format("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" ya existe.\n", line, col));
             errors = true;
         }else{
             tradJS[currentCode] += printTabs() + "project." + ctx.ID().getText() + " = new Image();      \n" ;
@@ -854,7 +896,8 @@ public class AnimationToJS extends AnimationJSBaseListener {
         if (vars.containsKey(ctx.ID().getText())) {
             int line = ctx.ID().getSymbol().getLine();
             int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
-            System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" ya existe.\n", line, col);
+            //System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" ya existe.\n", line, col);
+            errorList.add(String.format("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" ya existe.\n", line, col));
             errors = true;
         }else{
             tradJS[currentCode] += printTabs() + "project." + ctx.ID().getText() +" = newArray( "+trExpr(ctx.num_expr().getText())+" , \"\" );      \n";
@@ -868,19 +911,22 @@ public class AnimationToJS extends AnimationJSBaseListener {
         if (vars.containsKey(ctx.ID(0).getText())) {
             int line = ctx.ID(0).getSymbol().getLine();
             int col = ctx.ID(0).getSymbol().getCharPositionInLine() + 1;
-            System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID(0).getText() + "\" ya existe.\n", line, col);
+            //System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID(0).getText() + "\" ya existe.\n", line, col);
+            errorList.add(String.format("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID(0).getText() + "\" ya existe.\n", line, col));
             errors = true;
         }
         else if(!vars.containsKey(ctx.ID(1).getText())){
             int line = ctx.ID(0).getSymbol().getLine();
             int col = ctx.ID(0).getSymbol().getCharPositionInLine() + 1;
-            System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID(0).getText() + "\" no existe.\n", line, col);
+            //System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID(0).getText() + "\" no existe.\n", line, col);
+            errorList.add(String.format("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID(0).getText() + "\" no existe.\n", line, col));
             errors = true;
         }
         else if(!vars.get(ctx.ID(1).getText()).equals("img")){
             int line = ctx.ID(0).getSymbol().getLine();
             int col = ctx.ID(0).getSymbol().getCharPositionInLine() + 1;
-            System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID(0).getText() + "\" no existe.\n", line, col);
+            //System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID(0).getText() + "\" no existe.\n", line, col);
+            errorList.add(String.format("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID(0).getText() + "\" no existe.\n", line, col));
             errors = true;
         }
         else{
@@ -919,7 +965,8 @@ public class AnimationToJS extends AnimationJSBaseListener {
                 if(dtype.equals("img[]")){
                     int line = ctx.PYC().getSymbol().getLine();
                     int col = ctx.PYC().getSymbol().getCharPositionInLine() + 1;
-                    System.err.printf("<%d:%d> Error semantico, el arreglo \"" + ID + "\" se debe asignar con la función Src().\n", line, col);
+                    //System.err.printf("<%d:%d> Error semantico, el arreglo \"" + ID + "\" se debe asignar con la función Src().\n", line, col);
+                    errorList.add(String.format("<%d:%d> Error semantico, el arreglo \"" + ID + "\" se debe asignar con la función Src().\n", line, col));
                     errors = true;
                 }
                 switch (dtype){
@@ -964,7 +1011,8 @@ public class AnimationToJS extends AnimationJSBaseListener {
                 line = ctx.assigMinEq().ID().getSymbol().getLine();
                 col = ctx.assigMinEq().ID().getSymbol().getCharPositionInLine() + 1;
             }
-            System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ID + "\" no existe.\n", line, col);
+            //System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ID + "\" no existe.\n", line, col);
+            errorList.add(String.format("<%d:%d> Error semantico, la variable con nombre \"" + ID + "\" no existe.\n", line, col));
             errors = true;
         }
     }
@@ -977,13 +1025,15 @@ public class AnimationToJS extends AnimationJSBaseListener {
         if (!vars.containsKey(ctx.ID().getText())){
             int line = ctx.ID().getSymbol().getLine();
             int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
-            System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no existe.\n", line, col);
+            //System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no existe.\n", line, col);
+            errorList.add(String.format("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no existe.\n", line, col));
             errors = true;
         }
         else if(!vars.get(ctx.ID().getText()).equals("img[]")){
             int line = ctx.ID().getSymbol().getLine();
             int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
-            System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no es un arreglo de imagenes. \n", line, col);
+            //System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no es un arreglo de imagenes. \n", line, col);
+            errorList.add(String.format("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no es un arreglo de imagenes. \n", line, col));
             errors = true;
         }
         else{
@@ -1001,7 +1051,8 @@ public class AnimationToJS extends AnimationJSBaseListener {
             if (!dtype.equals("int[]") && !dtype.equals("float[]") && !dtype.equals("string[]") && !dtype.equals("bool[]") && !dtype.equals("img[]") ){
                 int line = ctx.ID().getSymbol().getLine();
                 int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
-                System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no es un arreglo.\n", line, col);
+                //System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no es un arreglo.\n", line, col);
+                errorList.add(String.format("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no es un arreglo.\n", line, col));
                 errors = true;
             }
         }
@@ -1010,14 +1061,16 @@ public class AnimationToJS extends AnimationJSBaseListener {
             if (!dtype.equals("int[]") && !dtype.equals("float[]") && !dtype.equals("string[]") && !dtype.equals("bool[]")){
                 int line = ctx.ID().getSymbol().getLine();
                 int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
-                System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no es un arreglo.\n", line, col);
+                //System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no es un arreglo.\n", line, col);
+                errorList.add(String.format("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no es un arreglo.\n", line, col));
                 errors = true;
             }
         }
         else{
             int line = ctx.ID().getSymbol().getLine();
             int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
-            System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no existe.\n", line, col);
+            //System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no existe.\n", line, col);
+            errorList.add(String.format("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no existe.\n", line, col));
             errors = true;
         }
     }
@@ -1063,11 +1116,13 @@ public class AnimationToJS extends AnimationJSBaseListener {
         else if(ctx.FILLRECT() != null) tradJS[currentCode] += printTabs() + "FillRect.draw(";
         else if(ctx.TRIANGLE() != null) tradJS[currentCode] += printTabs() + "Triangle.draw(";
         else if(ctx.FILLTRIANGLE() != null) tradJS[currentCode] += printTabs() + "FillTriangle.draw(";
+        else if(ctx.LINE() != null) tradJS[currentCode] += printTabs() + "Line.draw(";
         else if(ctx.ID() != null){
             if(!vars.containsKey(ctx.ID().getText())){
                 int line = ctx.ID().getSymbol().getLine();
                 int col = ctx.ID().getSymbol().getCharPositionInLine()+1;
-                System.err.printf("<%d:%d> Error semantico, la imagen \"" + ctx.ID().getText() + "\" no existe.\n",line,col);
+                //System.err.printf("<%d:%d> Error semantico, la imagen \"" + ctx.ID().getText() + "\" no existe.\n",line,col);
+                errorList.add(String.format("<%d:%d> Error semantico, la imagen \"" + ctx.ID().getText() + "\" no existe.\n",line,col));
                 errors = true;
             }
             else{
@@ -1078,7 +1133,8 @@ public class AnimationToJS extends AnimationJSBaseListener {
                     else{
                         int line = ctx.ID().getSymbol().getLine();
                         int col = ctx.ID().getSymbol().getCharPositionInLine()+1;
-                        System.err.printf("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" no es una imagen.\n",line,col);
+                        //System.err.printf("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" no es una imagen.\n",line,col);
+                        errorList.add(String.format("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" no es una imagen.\n",line,col));
                         errors = true;
                     }
                 }
@@ -1087,7 +1143,8 @@ public class AnimationToJS extends AnimationJSBaseListener {
                     else{
                         int line = ctx.ID().getSymbol().getLine();
                         int col = ctx.ID().getSymbol().getCharPositionInLine()+1;
-                        System.err.printf("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" no es una imagen.\n",line,col);
+                        //System.err.printf("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" no es una imagen.\n",line,col);
+                        errorList.add(String.format("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" no es una imagen.\n",line,col));
                         errors = true;
                     }
                 }
@@ -1123,13 +1180,15 @@ public class AnimationToJS extends AnimationJSBaseListener {
         if(!vars.containsKey(ctx.ID().getText())){
             int line = ctx.ID().getSymbol().getLine();
             int col = ctx.ID().getSymbol().getCharPositionInLine()+1;
-            System.err.printf("<%d:%d> Error semantico, la animación  \"" + ctx.ID().getText() + "\" no existe.\n",line,col);
+            //System.err.printf("<%d:%d> Error semantico, la animación  \"" + ctx.ID().getText() + "\" no existe.\n",line,col);
+            errorList.add(String.format("<%d:%d> Error semantico, la animación  \"" + ctx.ID().getText() + "\" no existe.\n",line,col));
             errors = true;
         }
         else if(!vars.get(ctx.ID().getText()).equals("animation")){
             int line = ctx.ID().getSymbol().getLine();
             int col = ctx.ID().getSymbol().getCharPositionInLine()+1;
-            System.err.printf("<%d:%d> Error semantico, la variable  \"" + ctx.ID().getText() + "\" no es una animación.\n",line,col);
+            //System.err.printf("<%d:%d> Error semantico, la variable  \"" + ctx.ID().getText() + "\" no es una animación.\n",line,col);
+            errorList.add(String.format("<%d:%d> Error semantico, la variable  \"" + ctx.ID().getText() + "\" no es una animación.\n",line,col));
             errors = true;
         }
         else{
@@ -1173,7 +1232,8 @@ public class AnimationToJS extends AnimationJSBaseListener {
                     !varsTableF.get(currFunction).containsKey(ctx.ID().getText()) && !varsTableFor.get(currFunction).contains(ctx.ID().getText())){
                 int line = ctx.ID().getSymbol().getLine();
                 int col = ctx.ID().getSymbol().getCharPositionInLine()+1;
-                System.err.printf("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" no existe.\n",line,col);
+                //System.err.printf("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" no existe.\n",line,col);
+                errorList.add(String.format("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" no existe.\n",line,col));
                 errors = true;
             }
         }
@@ -1187,7 +1247,8 @@ public class AnimationToJS extends AnimationJSBaseListener {
                     !varsTableF.get(currFunction).containsKey(ctx.ID().getText()) && !varsTableFor.get(currFunction).contains(ctx.ID().getText())){
                 int line = ctx.ID().getSymbol().getLine();
                 int col = ctx.ID().getSymbol().getCharPositionInLine()+1;
-                System.err.printf("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" no existe.\n",line,col);
+                //System.err.printf("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" no existe.\n",line,col);
+                errorList.add(String.format("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" no existe.\n",line,col));
                 errors = true;
             }
         }
@@ -1302,7 +1363,8 @@ public class AnimationToJS extends AnimationJSBaseListener {
         if(varsTableFor.get(currFunction).contains(ctx.ID().getText())){
             int line = ctx.ID().getSymbol().getLine();
             int col = ctx.ID().getSymbol().getCharPositionInLine()+1;
-            System.err.printf("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" del ciclo FOR ya existe.\n",line,col);
+            //System.err.printf("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" del ciclo FOR ya existe.\n",line,col);
+            errorList.add(String.format("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" del ciclo FOR ya existe.\n",line,col));
             errors = true;
         }
         else{

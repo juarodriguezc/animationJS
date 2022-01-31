@@ -3,7 +3,7 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 public class Main {
     public static void main(String[] args) throws Exception {
-        //try{
+        try{
             // create a CharStream that reads from standard input
             // create a lexer that feeds off of input CharStream
             AnimationJSLexer lexer;
@@ -17,16 +17,15 @@ public class Main {
             // create a parser that feeds off the tokens buffer
             AnimationJSParser parser = new AnimationJSParser(tokens);
             ParseTree tree = parser.code();
-
             // begin parsing at init rule
             // Create a generic parse tree walker that can trigger callbacks
             ParseTreeWalker walker = new ParseTreeWalker();
             // Walk the tree created during the parse, trigger callbacks
             walker.walk(new AnimationToJS(lexer), tree);
             System.out.println(); // print a \n after translation
-        //} catch (Exception e){
-        //    System.err.println("Error en el análisis léxico / sintáctico / semántico. " + e);
-        //}
+        } catch (Exception e){
+            System.err.println("Error en el análisis léxico / sintáctico / semántico. " + e);
+        }
 
 
     }

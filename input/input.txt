@@ -1,77 +1,55 @@
-//Ejemplo 3     -       Logo AnimationJS
+//Ejemplo 5     -       SpriteAnimation
 function setup(){
     SetCanvas(600,600);
+    //0 - idle, 1 - walking, 2 - sit
     int state = 0;
-    //"0 - begin, 1 - stop, 2 - animation"
-    int letterJ = 0;
-    int letterS = 1;
-    //"0 - stop, 1 - move"
-    int[] endPos = Array(2);
-    endPos[0] = 550;
-    endPos[1] = 350;
-    int[] startPos = Array(2);
-    startPos[0] = -100;
-    startPos[1] = -250;
-    int cont = 0;
+    int xPos = 100;
+    int yPos = 300;
+    int paso = 5;
+    //Load background
+    img background = Src("/assets/background.jpg");
+    //Load dog images
+    //Idle
+    img idle_dog = Src("/assets/dog_idle.png");
+    animation idleAnim = Nanimation(idle_dog, 575, 523, 7);
+    //Walk
+    img walk_dog = Src("/assets/dog_walk.png");
+    animation walkAnim = Nanimation(walk_dog, 575, 523, 9);
+    //Sit
+    img sit_dog = Src("/assets/dog_sit.png");
+    animation sitAnim = Nanimation(sit_dog, 575, 523, 5);
 }
 
 function animate(){
-    if(state == 0){
-        SetBackground(RGB(247,223,30));
-        Text("J",160,startPos[0],350,600,RGB(0,0,0),"Arial");
-        Text("S",startPos[1],550,350,600,RGB(0,0,0),"Arial");
-        
-        if(startPos[1] < endPos[1] && letterS == 1){
-            startPos[1] = startPos[1] + 5;
+    //Draw Background
+    SetBackground(RGB(255,255,255));
+    Draw(background,0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+    if(KEYPRESSED == RIGHT){
+        state = 1;
+        if(xPos<700){
+            xPos += paso;
         }
         else{
-            letterS = 0;
-            letterJ = 1;
-        }
-        
-        if(startPos[0] < endPos[0] && letterJ == 1){
-            startPos[0] = startPos[0] + 5;
-        }
-        else{
-            letterJ = 0;
-        }
-        if(KEYPRESSED == SPACE && letterJ == 0 && letterS == 0){
-            state = 1;
+            xPos = -200;
         }
     }
-    else if(state == 1){
-        SetBackground(RGB(2,22,49));
+    else if(KEYPRESSED == DOWN){
         state = 2;
     }
-    else if(state == 2){
-        Wait(3000);
-        state = 3;
+    else{
+        state = 0;
     }
-    else if(state == 3){
-        SetBackground(RGB(2,22,49));
-        Text("Animation",20,170,90,600,RGB(cont+2,cont+22,cont+49),"century gothic");
-        Draw(FillCircle,152, 108, 10,RGB(2,22,49));
-        Draw(FillCircle,345, 108, 10,RGB(2,22,49));
-        if(cont<255-49){
-            cont+=3;
-        }
-        else{
-            state = 4;
-        }
-    }
-    else if(state == 4){
-        SetBackground(RGB(2,22,49));
-        Text("Animation",20,170,90,600,RGB(255,255,255),"century gothic");
-        Text("J",160,startPos[0],350,600,RGB(255,255,255),"Arial");
-        Text("S",startPos[1],550,350,600,RGB(255,255,255),"Arial");
-        Draw(FillCircle,152, 108, 10,RGB(2,22,49));
-        Draw(FillCircle,345, 108, 10,RGB(2,22,49));
-        state = 5;
-    }
-    else if(state == 5){
-        
-        Draw(FillCircle,152 + 5*Sin(FRAMES), 95+5*Cos(FRAMES), 7,RGB(IntRandom(50,255),IntRandom(50,255),IntRandom(50,255)));
-        Draw(FillCircle,345 + 5*Sin(FRAMES), 95+5*Cos(FRAMES), 7,RGB(IntRandom(50,255),IntRandom(50,255),IntRandom(50,255)));
-        
+    switch (state){
+        case 0:
+            Anim(idleAnim, xPos, yPos, 200, 200, 500);
+            break;
+        case 1:
+            Anim(walkAnim, xPos, yPos, 200, 200, 500);
+            break;
+        case 2:
+            Anim(sitAnim, xPos, yPos+5, 200, 200, 400);
+            break;
+        default:
+            Anim(idleAnim, xPos, yPos, 200, 200, 500);
     }
 }
