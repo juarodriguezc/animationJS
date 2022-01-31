@@ -26,6 +26,8 @@ m_command           : setCanvas
                     | switchStr
                     | declarationImg
                     | declarationAnim
+                    | declarationImgArray
+                    | assignationImgArray
                     ;
 
 command             : declarationL
@@ -41,6 +43,7 @@ command             : declarationL
                     | forStr
                     | switchStr
                     | anim
+                    | assignationImgArray
                     ;
 
 setCanvas           : SETCANVAS PAR_IZQ DT_INT COMMA DT_INT PAR_DER PYC;
@@ -65,6 +68,8 @@ assigPlEq           : ID SUMA EQU num_expr;
 assigMinEq          : ID RESTA EQU num_expr;
 assigArr            : ID COR_IZQ num_expr COR_DER EQU expr;
 
+assignationImgArray : ID COR_IZQ num_expr COR_DER EQU SRC PAR_IZQ expr PAR_DER PYC;
+
 console             : CONSOLE PAR_IZQ expr (COMMA expr)* PAR_DER PYC;
 setBackground       : SETBACKGROUND PAR_IZQ rgb PAR_DER PYC;
 
@@ -75,6 +80,7 @@ draw                : DRAW PAR_IZQ CIRCLE COMMA num_expr COMMA num_expr COMMA nu
                     | DRAW PAR_IZQ TRIANGLE COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr (COMMA num_expr)?  (COMMA rgb)? PAR_DER PYC
                     | DRAW PAR_IZQ FILLTRIANGLE COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr (COMMA rgb)? PAR_DER PYC
                     | DRAW PAR_IZQ ID COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr PAR_DER PYC
+                    | DRAW PAR_IZQ ID COR_IZQ num_expr COR_DER COMMA num_expr COMMA num_expr COMMA num_expr COMMA num_expr PAR_DER PYC
                     ;
 
 text                : TEXT PAR_IZQ expr COMMA num_expr COMMA num_expr COMMA num_expr (COMMA num_expr)? (COMMA rgb)? (COMMA DT_STRING)? PAR_DER PYC;
@@ -113,6 +119,8 @@ switchCase          : CASE expr DOSP command* breakStr;
 switchDefault       : DEFAULT DOSP command* breakStr?;
 
 declarationImg      : IMG ID EQU SRC PAR_IZQ DT_STRING PAR_DER PYC;
+
+declarationImgArray : IMG COR_IZQ COR_DER ID EQU ARRAY PAR_IZQ num_expr PAR_DER PYC;
 
 declarationAnim     : ANIMATION ID EQU NANIMATION PAR_IZQ ID COMMA num_expr COMMA num_expr COMMA num_expr PAR_DER PYC;
 
@@ -228,6 +236,7 @@ num_expr        : num_expr oper_num num_expr
                 | RANDOM PAR_IZQ num_expr COMMA num_expr PAR_DER
                 | INTRANDOM PAR_IZQ num_expr COMMA num_expr PAR_DER
                 | length
+                | ID COR_IZQ num_expr COR_DER
                 ;
 
 expr            : expr oper_num expr
@@ -249,6 +258,7 @@ expr            : expr oper_num expr
                 | tf_log
                 | NEGACION tf_log
                 | length
+                | ID COR_IZQ num_expr COR_DER
                 ;
 
 

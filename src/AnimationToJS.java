@@ -114,7 +114,7 @@ public class AnimationToJS extends AnimationJSBaseListener {
         List<String> lExpr = new ArrayList<>();
         //System.out.println("Nexpr: "+nExpr);
         for (String str : aExpr) {
-            System.out.println(str);
+            //System.out.println(str);
             if (!str.equals("")) {
                 if (sVars.contains(str)) {
                     if (str.equals("Sin") || str.equals("Cos")) lExpr.add("Math." + str.toLowerCase());
@@ -372,6 +372,13 @@ public class AnimationToJS extends AnimationJSBaseListener {
                             "}      \n";
         }
         {
+            tradJS[1] +=    "function DrawImg(src, x, y, width, height) {\n" +
+                            "    var img = new Image();\n" +
+                            "    img.src = src;\n" +
+                            "    ctx.drawImage(img, x, y, width, height);\n" +
+                            "}      \n";
+        }
+        {
             tradJS[2] += "//System variables                                \n";
             tradJS[2] += "const project = new Project();                    \n";
             tradJS[2] += "const Background = new BackgroundClass();         \n";
@@ -613,8 +620,8 @@ public class AnimationToJS extends AnimationJSBaseListener {
         } else {
             System.out.println("Proyecto creado correctamente.");
         }
-        System.out.println(vars);
-        System.out.println(varsTableF);
+        //System.out.println(vars);
+        //System.out.println(varsTableF);
     }
 
 
@@ -843,21 +850,38 @@ public class AnimationToJS extends AnimationJSBaseListener {
 
     @Override public void exitDeclarationImg(AnimationJSParser.DeclarationImgContext ctx) {  }
 
+    @Override public void enterDeclarationImgArray(AnimationJSParser.DeclarationImgArrayContext ctx) {
+        if (vars.containsKey(ctx.ID().getText())) {
+            int line = ctx.ID().getSymbol().getLine();
+            int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
+            System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" ya existe.\n", line, col);
+            errors = true;
+        }else{
+            tradJS[currentCode] += printTabs() + "project." + ctx.ID().getText() +" = newArray( "+trExpr(ctx.num_expr().getText())+" , \"\" );      \n";
+            vars.put(ctx.ID().getText(), ctx.IMG().getText()+"[]");
+        }
+    }
+
+    @Override public void exitDeclarationImgArray(AnimationJSParser.DeclarationImgArrayContext ctx) { }
+
     @Override public void enterDeclarationAnim(AnimationJSParser.DeclarationAnimContext ctx) {
         if (vars.containsKey(ctx.ID(0).getText())) {
             int line = ctx.ID(0).getSymbol().getLine();
             int col = ctx.ID(0).getSymbol().getCharPositionInLine() + 1;
             System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID(0).getText() + "\" ya existe.\n", line, col);
+            errors = true;
         }
         else if(!vars.containsKey(ctx.ID(1).getText())){
             int line = ctx.ID(0).getSymbol().getLine();
             int col = ctx.ID(0).getSymbol().getCharPositionInLine() + 1;
             System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID(0).getText() + "\" no existe.\n", line, col);
+            errors = true;
         }
         else if(!vars.get(ctx.ID(1).getText()).equals("img")){
             int line = ctx.ID(0).getSymbol().getLine();
             int col = ctx.ID(0).getSymbol().getCharPositionInLine() + 1;
             System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID(0).getText() + "\" no existe.\n", line, col);
+            errors = true;
         }
         else{
             tradJS[currentCode] += printTabs() + "project." + ctx.ID(0).getText() + " = new AnimationClass( project."+ ctx.ID(1);
@@ -888,10 +912,16 @@ public class AnimationToJS extends AnimationJSBaseListener {
                 if(ctx.assigUsual() != null)tradJS[currentCode] +=  " = ";
                 else if(ctx.assigPlEq() != null)tradJS[currentCode] +=  " += ";
                 else if(ctx.assigMinEq() != null)tradJS[currentCode] +=  " -= ";
-                else if(ctx.assigArr() != null)tradJS[currentCode] +=  "[ "+trExpr(ctx.assigArr().num_expr().getText())+" ] = ";
+                else if(ctx.assigArr() != null)tradJS[currentCode] +=  "["+trExpr(ctx.assigArr().num_expr().getText())+"] = ";
                 String dtype = "";
                 if(vars.get(ID) != null)dtype = vars.get(ID) ;
                 else dtype = varsTableF.get(currFunction).get(ID) ;
+                if(dtype.equals("img[]")){
+                    int line = ctx.PYC().getSymbol().getLine();
+                    int col = ctx.PYC().getSymbol().getCharPositionInLine() + 1;
+                    System.err.printf("<%d:%d> Error semantico, el arreglo \"" + ID + "\" se debe asignar con la función Src().\n", line, col);
+                    errors = true;
+                }
                 switch (dtype){
                     case "int[]":
                     case "int":
@@ -913,7 +943,7 @@ public class AnimationToJS extends AnimationJSBaseListener {
                 if(ctx.assigUsual() != null)tradJS[currentCode] += trExpr(ctx.assigUsual().expr().getText()) + " );       \n";
                 else if(ctx.assigPlEq() != null)tradJS[currentCode] += trExpr(ctx.assigPlEq().num_expr().getText()) + " );       \n";
                 else if(ctx.assigMinEq() != null)tradJS[currentCode] += trExpr(ctx.assigMinEq().num_expr().getText()) + " );       \n";
-                else if(ctx.assigArr() != null)tradJS[currentCode] += trExpr(ctx.assigArr().num_expr().getText()) + " );       \n";
+                else if(ctx.assigArr() != null)tradJS[currentCode] += trExpr(ctx.assigArr().expr().getText()) + " );       \n";
             }
             else{
                 tradJS[currentCode] += "++;     \n";
@@ -943,10 +973,32 @@ public class AnimationToJS extends AnimationJSBaseListener {
     public void exitAssignation(AnimationJSParser.AssignationContext ctx) {
     }
 
+    @Override public void enterAssignationImgArray(AnimationJSParser.AssignationImgArrayContext ctx) {
+        if (!vars.containsKey(ctx.ID().getText())){
+            int line = ctx.ID().getSymbol().getLine();
+            int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
+            System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no existe.\n", line, col);
+            errors = true;
+        }
+        else if(!vars.get(ctx.ID().getText()).equals("img[]")){
+            int line = ctx.ID().getSymbol().getLine();
+            int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
+            System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no es un arreglo de imagenes. \n", line, col);
+            errors = true;
+        }
+        else{
+            tradJS[currentCode] += printTabs() + "project." + ctx.ID().getText()+"["+trExpr(ctx.num_expr().getText())+"] = String("+trExpr(ctx.expr().getText())+");    \n";
+        }
+    }
+
+    @Override public void exitAssignationImgArray(AnimationJSParser.AssignationImgArrayContext ctx) {
+
+    }
+
     @Override public void enterLength(AnimationJSParser.LengthContext ctx) {
         if(vars.containsKey(ctx.ID().getText())){
             String dtype = vars.get(ctx.ID().getText());
-            if (!dtype.equals("int[]") && !dtype.equals("float[]") && !dtype.equals("string[]") && !dtype.equals("bool[]")){
+            if (!dtype.equals("int[]") && !dtype.equals("float[]") && !dtype.equals("string[]") && !dtype.equals("bool[]") && !dtype.equals("img[]") ){
                 int line = ctx.ID().getSymbol().getLine();
                 int col = ctx.ID().getSymbol().getCharPositionInLine() + 1;
                 System.err.printf("<%d:%d> Error semantico, la variable con nombre \"" + ctx.ID().getText() + "\" no es un arreglo.\n", line, col);
@@ -1004,6 +1056,7 @@ public class AnimationToJS extends AnimationJSBaseListener {
 
     @Override
     public void enterDraw(AnimationJSParser.DrawContext ctx) {
+        boolean imgArr = false;
         if(ctx.CIRCLE() != null)tradJS[currentCode] += printTabs() + "Circle.draw(";
         else if(ctx.FILLCIRCLE() != null) tradJS[currentCode] += printTabs() + "FillCircle.draw(";
         else if(ctx.RECT() != null) tradJS[currentCode] += printTabs() + "Rect.draw(";
@@ -1018,26 +1071,47 @@ public class AnimationToJS extends AnimationJSBaseListener {
                 errors = true;
             }
             else{
-                if(vars.get(ctx.ID().getText()).equals("img"))tradJS[currentCode] += printTabs() + "ctx.drawImage( "+trExpr(ctx.ID().getText())+", ";
+                if(ctx.COR_IZQ() != null){
+                    imgArr = true;
+                    if(vars.get(ctx.ID().getText()).equals("img[]"))
+                        tradJS[currentCode] += printTabs() + "DrawImg( "+trExpr(ctx.ID().getText())+"["+trExpr(ctx.num_expr(0).getText())+"], ";
+                    else{
+                        int line = ctx.ID().getSymbol().getLine();
+                        int col = ctx.ID().getSymbol().getCharPositionInLine()+1;
+                        System.err.printf("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" no es una imagen.\n",line,col);
+                        errors = true;
+                    }
+                }
                 else{
-                    int line = ctx.ID().getSymbol().getLine();
-                    int col = ctx.ID().getSymbol().getCharPositionInLine()+1;
-                    System.err.printf("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" no es una imagen.\n",line,col);
-                    errors = true;
+                    if(vars.get(ctx.ID().getText()).equals("img")) tradJS[currentCode] += printTabs() + "ctx.drawImage( "+trExpr(ctx.ID().getText())+", ";
+                    else{
+                        int line = ctx.ID().getSymbol().getLine();
+                        int col = ctx.ID().getSymbol().getCharPositionInLine()+1;
+                        System.err.printf("<%d:%d> Error semantico, la variable \"" + ctx.ID().getText() + "\" no es una imagen.\n",line,col);
+                        errors = true;
+                    }
                 }
             }
         }
-        for(int i=0; i<ctx.num_expr().size(); i++){
-            if(i != 0)tradJS[currentCode] +=    ", ";
-            tradJS[currentCode] +=  trExpr(ctx.num_expr(i).getText());
-        }
-        if(ctx.rgb() != null){
-            tradJS[currentCode] +=  ",\"rgb(";
-            for (int i = 0; i < ctx.rgb().num_expr().size(); i++) {
-                if (i != 0) tradJS[currentCode] += ", ";
-                tradJS[currentCode] += "\"+(" + trExpr(ctx.rgb().num_expr(i).getText()) + ")+\"";
+        if(imgArr){
+            for(int i=1; i<ctx.num_expr().size(); i++){
+                if(i != 1)tradJS[currentCode] +=    ", ";
+                tradJS[currentCode] +=  trExpr(ctx.num_expr(i).getText());
             }
-            tradJS[currentCode] += ")\"";
+        }
+        else{
+            for(int i=0; i<ctx.num_expr().size(); i++){
+                if(i != 0)tradJS[currentCode] +=    ", ";
+                tradJS[currentCode] +=  trExpr(ctx.num_expr(i).getText());
+            }
+            if(ctx.rgb() != null){
+                tradJS[currentCode] +=  ",\"rgb(";
+                for (int i = 0; i < ctx.rgb().num_expr().size(); i++) {
+                    if (i != 0) tradJS[currentCode] += ", ";
+                    tradJS[currentCode] += "\"+(" + trExpr(ctx.rgb().num_expr(i).getText()) + ")+\"";
+                }
+                tradJS[currentCode] += ")\"";
+            }
         }
     }
 
@@ -1072,8 +1146,9 @@ public class AnimationToJS extends AnimationJSBaseListener {
     }
 
     @Override public void enterText(AnimationJSParser.TextContext ctx) {
-        tradJS[currentCode] += printTabs()+ "Text.write("+ trExpr(ctx.expr().getText()) +", "+ ctx.num_expr(0).getText()+", "+ctx.num_expr(1).getText()+", "+ctx.num_expr(2).getText();
-        if(ctx.num_expr(3) != null) tradJS[currentCode] +=  ", "+ctx.num_expr(3).getText();
+        tradJS[currentCode] += printTabs()+ "Text.write("+ trExpr(ctx.expr().getText()) +", "+ trExpr(ctx.num_expr(0).getText())+
+                ", "+trExpr(ctx.num_expr(1).getText())+", "+trExpr(ctx.num_expr(2).getText());
+        if(ctx.num_expr(3) != null) tradJS[currentCode] +=  ", "+trExpr(ctx.num_expr(3).getText());
         else tradJS[currentCode] +=  ", undefined";
         if(ctx.rgb() != null){
             tradJS[currentCode] +=  ", \"rgb(";

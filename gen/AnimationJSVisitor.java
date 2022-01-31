@@ -106,6 +106,12 @@ public interface AnimationJSVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAssigArr(AnimationJSParser.AssigArrContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link AnimationJSParser#assignationImgArray}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssignationImgArray(AnimationJSParser.AssignationImgArrayContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link AnimationJSParser#console}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -231,6 +237,12 @@ public interface AnimationJSVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDeclarationImg(AnimationJSParser.DeclarationImgContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link AnimationJSParser#declarationImgArray}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclarationImgArray(AnimationJSParser.DeclarationImgArrayContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AnimationJSParser#declarationAnim}.
 	 * @param ctx the parse tree

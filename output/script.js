@@ -206,6 +206,11 @@ function newArray(num,startVal){
 function Len(array){
     return array.length;
 }      
+function DrawImg(src, x, y, width, height) {
+    var img = new Image();
+    img.src = src;
+    ctx.drawImage(img, x, y, width, height);
+}      
 
 //System variables                                
 const project = new Project();                    
@@ -245,57 +250,78 @@ const RIGHT = "RIGHT";
 
 setup();                   
 function setup(){          
-	ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);      
-	Background.draw("rgb("+(255)+", "+(0)+", "+(255)+")");      
-	project.a = 0.0;       
-	project.b = parseFloat( 2 );       
-	project.c = parseFloat( Math.sin(2^(project.a+3)) );       
-	project.x = parseInt( 0 );       
-	console.log(project.c);     
-	project.a = parseFloat( 0.5 );       
-	project.a++;     
-	project.a += parseFloat( (Math.sin(0.5)) );       
-	project.c = parseFloat( Math.sin(2^(project.a+3)) );       
-	console.log(project.a);     
-	project.sum = parseInt( 0 );       
-	project.test = 0;       
-	project.newImage = new Image();      
-	project.newImage.src = '/assets/shadow_dog.png';     
-	project.i = parseInt( 10 );       
-	for( let i=0; i<10; i++ ){        
-		for( let j=0; j<10; j++ ){        
-			for( let k=0; k<10; k++ ){        
-				FillCircle.draw(100+i*50, 100+j*50, 10-k,"rgb("+(25*k)+", "+(20)+", "+(20)+")");     
-			}          
-		}          
-	}          
-	project.anim1 = new AnimationClass( project.newImage, 575, 523, 7);    
-	project.arrInt = newArray( 10*5 , false );       
+	project.state = parseInt( 0 );       
+	project.letterJ = parseInt( 0 );       
+	project.letterS = parseInt( 1 );       
+	project.endPos = newArray( 2 , 0 );       
+	project.endPos[0] = parseInt( 550 );       
+	project.endPos[1] = parseInt( 350 );       
+	project.startPos = newArray( 2 , 0 );       
+	project.startPos[0] = parseInt( -100 );       
+	project.startPos[1] = parseInt( -250 );       
+	project.cont = parseInt( 0 );       
 	animate();                         
 };                         
 
 function animate(){          
-	let arrInt2 = newArray( 10*5 , false ) ;       
-	arrInt2[ 0 ] = Boolean( 0 );       
-	ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);      
-	Background.draw("rgb("+(255)+", "+(255)+", "+(0)+")");      
-	let as = parseFloat( 2 );       
-	console.log(Len(as));     
-	Text.write(as+as-as, 100, 100, 20, undefined, undefined, undefined);     
-	let test2 = parseFloat( "holo" );       
-	ctx.drawImage( project.newImage, 0, 100, CANVAS_WIDTH, 200);     
-	let suma = parseInt( 2 );       
-	switch( suma ){    
-		case 0:          
-			Text.write("Zero", 20, 20, 10, 200, undefined, undefined);     
-			break;     
-		case 1:          
-			Text.write("One", 20, 20, 10, 200, undefined, undefined);     
-			break;     
-		default:             
-			Text.write("None", 20, 20, 10, 200, undefined, undefined);     
-	}          
-	project.anim1.animate( 200, 200, 200, 200, 500 );        
+	if( project.state==0 ){    
+		ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);      
+		Background.draw("rgb("+(247)+", "+(223)+", "+(30)+")");      
+		Text.write("J", 160, project.startPos[0], 350, 600, "rgb("+(0)+", "+(0)+", "+(0)+")", "Arial");     
+		Text.write("S", project.startPos[1], 550, 350, 600, "rgb("+(0)+", "+(0)+", "+(0)+")", "Arial");     
+		if( project.startPos[1]<project.endPos[1]&&project.letterS==1 ){    
+			project.startPos[1] = parseInt( project.startPos[1]+5 );       
+		}    
+		else{    
+			project.letterS = parseInt( 0 );       
+			project.letterJ = parseInt( 1 );       
+		}    
+		if( project.startPos[0]<project.endPos[0]&&project.letterJ==1 ){    
+			project.startPos[0] = parseInt( project.startPos[0]+5 );       
+		}    
+		else{    
+			project.letterJ = parseInt( 0 );       
+		}    
+		if( KEYPRESSED==SPACE&&project.letterJ==0&&project.letterS==0 ){    
+			project.state = parseInt( 1 );       
+		}    
+	}    
+	else if( project.state==1 ){    
+		ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);      
+		Background.draw("rgb("+(2)+", "+(22)+", "+(49)+")");      
+		project.state = parseInt( 2 );       
+	}    
+	else if( project.state==2 ){    
+		Wait.wait( 3000 );      
+		project.state = parseInt( 3 );       
+	}    
+	else if( project.state==3 ){    
+		ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);      
+		Background.draw("rgb("+(2)+", "+(22)+", "+(49)+")");      
+		Text.write("Animation", 20, 170, 90, 600, "rgb("+(project.cont+2)+", "+(project.cont+22)+", "+(project.cont+49)+")", "century gothic");     
+		FillCircle.draw(152, 108, 10,"rgb("+(2)+", "+(22)+", "+(49)+")");     
+		FillCircle.draw(345, 108, 10,"rgb("+(2)+", "+(22)+", "+(49)+")");     
+		if( project.cont<255-49 ){    
+			project.cont += parseInt( 3 );       
+		}    
+		else{    
+			project.state = parseInt( 4 );       
+		}    
+	}    
+	else if( project.state==4 ){    
+		ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);      
+		Background.draw("rgb("+(2)+", "+(22)+", "+(49)+")");      
+		Text.write("Animation", 20, 170, 90, 600, "rgb("+(255)+", "+(255)+", "+(255)+")", "century gothic");     
+		Text.write("J", 160, project.startPos[0], 350, 600, "rgb("+(255)+", "+(255)+", "+(255)+")", "Arial");     
+		Text.write("S", project.startPos[1], 550, 350, 600, "rgb("+(255)+", "+(255)+", "+(255)+")", "Arial");     
+		FillCircle.draw(152, 108, 10,"rgb("+(2)+", "+(22)+", "+(49)+")");     
+		FillCircle.draw(345, 108, 10,"rgb("+(2)+", "+(22)+", "+(49)+")");     
+		project.state = parseInt( 5 );       
+	}    
+	else if( project.state==5 ){    
+		FillCircle.draw(152+5*Math.sin(FRAMES), 95+5*Math.cos(FRAMES), 7,"rgb("+(IntRandom.get(50,255))+", "+(IntRandom.get(50,255))+", "+(IntRandom.get(50,255))+")");     
+		FillCircle.draw(345+5*Math.sin(FRAMES), 95+5*Math.cos(FRAMES), 7,"rgb("+(IntRandom.get(50,255))+", "+(IntRandom.get(50,255))+", "+(IntRandom.get(50,255))+")");     
+	}    
 	FRAMES++;      
 	requestAnimationFrame(animate);      
 }              

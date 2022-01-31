@@ -167,6 +167,16 @@ public interface AnimationJSListener extends ParseTreeListener {
 	 */
 	void exitAssigArr(AnimationJSParser.AssigArrContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link AnimationJSParser#assignationImgArray}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssignationImgArray(AnimationJSParser.AssignationImgArrayContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AnimationJSParser#assignationImgArray}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssignationImgArray(AnimationJSParser.AssignationImgArrayContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link AnimationJSParser#console}.
 	 * @param ctx the parse tree
 	 */
@@ -376,6 +386,16 @@ public interface AnimationJSListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDeclarationImg(AnimationJSParser.DeclarationImgContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AnimationJSParser#declarationImgArray}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclarationImgArray(AnimationJSParser.DeclarationImgArrayContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AnimationJSParser#declarationImgArray}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclarationImgArray(AnimationJSParser.DeclarationImgArrayContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AnimationJSParser#declarationAnim}.
 	 * @param ctx the parse tree

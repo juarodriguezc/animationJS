@@ -207,6 +207,18 @@ public class AnimationJSBaseListener implements AnimationJSListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterAssignationImgArray(AnimationJSParser.AssignationImgArrayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAssignationImgArray(AnimationJSParser.AssignationImgArrayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterConsole(AnimationJSParser.ConsoleContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -454,6 +466,18 @@ public class AnimationJSBaseListener implements AnimationJSListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDeclarationImg(AnimationJSParser.DeclarationImgContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDeclarationImgArray(AnimationJSParser.DeclarationImgArrayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDeclarationImgArray(AnimationJSParser.DeclarationImgArrayContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

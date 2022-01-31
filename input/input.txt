@@ -1,89 +1,77 @@
+//Ejemplo 3     -       Logo AnimationJS
 function setup(){
     SetCanvas(600,600);
-    SetBackground(RGB(255,0,255));
-    float a;
-    float b = 2;
-    float c = Sin(2^(a+3));
-    int x = 0;
-    Console(c);
-    a = 0.5;
-    a++;
-    a+=(Sin(0.5));
-    c = Sin(2^(a+3));
-    Console(a);
-    //HideCursor();
-    int sum = 0;
-    int test;
-    img newImage = Src('/assets/shadow_dog.png');
-    int i = 10;
-    for(i=0; i<10; i++){
-        for(j=0; j<10; j++){
-            for(k=0; k<10; k++){
-                Draw(FillCircle, 100+i*50, 100+j*50, 10-k, RGB(25*k,20,20));
-            }
-        }
-    }
-    animation anim1 = Nanimation(newImage, 575,523,7);
-    bool[] arrInt = Array(10*5);
+    int state = 0;
+    //"0 - begin, 1 - stop, 2 - animation"
+    int letterJ = 0;
+    int letterS = 1;
+    //"0 - stop, 1 - move"
+    int[] endPos = Array(2);
+    endPos[0] = 550;
+    endPos[1] = 350;
+    int[] startPos = Array(2);
+    startPos[0] = -100;
+    startPos[1] = -250;
+    int cont = 0;
 }
 
 function animate(){
-    bool[] arrInt2 = Array(10*5);
-
-    arrInt2[0] = true;
-    SetBackground(RGB(255,255,0));
-    float as = 2;
-    Console(Len(as));
-    Text(as+as-as, 100, 100, 20);
-    float test2 = "holo";
-    Draw(newImage,0,100,CANVAS_WIDTH,200);
-    int suma = 2;
-    switch(suma){
-        case 0:
-            Text("Zero",20,20,10,200);
-            Break;
-        case 1:
-            Text("One",20,20,10,200);
-            Break;
-        default:
-            Text("None",20,20,10,200);
+    if(state == 0){
+        SetBackground(RGB(247,223,30));
+        Text("J",160,startPos[0],350,600,RGB(0,0,0),"Arial");
+        Text("S",startPos[1],550,350,600,RGB(0,0,0),"Arial");
+        
+        if(startPos[1] < endPos[1] && letterS == 1){
+            startPos[1] = startPos[1] + 5;
+        }
+        else{
+            letterS = 0;
+            letterJ = 1;
+        }
+        
+        if(startPos[0] < endPos[0] && letterJ == 1){
+            startPos[0] = startPos[0] + 5;
+        }
+        else{
+            letterJ = 0;
+        }
+        if(KEYPRESSED == SPACE && letterJ == 0 && letterS == 0){
+            state = 1;
+        }
     }
-    Anim(anim1, 200,200, 200,200,500);
-    /*
-    if(KEYPRESSED == LEFT){
-        Wait(5000);
+    else if(state == 1){
+        SetBackground(RGB(2,22,49));
+        state = 2;
     }
-    test-=5;
-    Console(test);
-    for(int i=0; i<10; i++){
-        Draw(FillCircle, 0.5*x, 200+25*i, 5, RGB(200,20,20));
+    else if(state == 2){
+        Wait(3000);
+        state = 3;
     }
-
-    Draw(FillCircle, 100+x, 250, 50, RGB(200,20,20));
-    Draw(Rect, 100+x, 350, 50,50, 20, RGB(200,20,20));
-    Draw(FillRect, 100+x, 450, 50,50, RGB(200,20,200));
-    Draw(Triangle, 500, 100, 550,100, 550,150,5,RGB(200,200,200));
-    Draw(FillTriangle, 500, 300, 550,300, 550,250,RGB(00,200,200));
-    Text("KeyPressed: "+KEYPRESSED,50,100,20,200,RGB(255,0,0));
-    Text("KeyReleased: "+KEYRELEASED,50,140,20,800,RGB(255,0,0));
-    Text("J",250,550,300,900,RGB(IntRandom(0,(MOUSEX%255)),IntRandom(0,(MOUSEX%255)),IntRandom(0,(MOUSEX%255))),"Arial");
-    Text("S",400,550,300,900,RGB(0,0,0),"Arial");
-    Draw(FillCircle, MOUSEX, MOUSEY, 10);
-    a = IntRandom(-5,5);
-    Text(a,300,300,20);
-    x = (x+1)%255;
-    if(KEYPRESSED == LEFT || KEYPRESSED == RIGHT ){
-        Text("Es X",200,400,20,RGB(0,0,0));
+    else if(state == 3){
+        SetBackground(RGB(2,22,49));
+        Text("Animation",20,170,90,600,RGB(cont+2,cont+22,cont+49),"century gothic");
+        Draw(FillCircle,152, 108, 10,RGB(2,22,49));
+        Draw(FillCircle,345, 108, 10,RGB(2,22,49));
+        if(cont<255-49){
+            cont+=3;
+        }
+        else{
+            state = 4;
+        }
     }
-    else if(KEYPRESSED == "Up"){
-        Text("Es Up",200,400,20,RGB(0,0,0));
+    else if(state == 4){
+        SetBackground(RGB(2,22,49));
+        Text("Animation",20,170,90,600,RGB(255,255,255),"century gothic");
+        Text("J",160,startPos[0],350,600,RGB(255,255,255),"Arial");
+        Text("S",startPos[1],550,350,600,RGB(255,255,255),"Arial");
+        Draw(FillCircle,152, 108, 10,RGB(2,22,49));
+        Draw(FillCircle,345, 108, 10,RGB(2,22,49));
+        state = 5;
     }
-    else if(KEYPRESSED == "Down"){
-        Text("Es Down",200,400,20,RGB(0,0,0));
+    else if(state == 5){
+        
+        Draw(FillCircle,152 + 5*Sin(FRAMES), 95+5*Cos(FRAMES), 7,RGB(IntRandom(50,255),IntRandom(50,255),IntRandom(50,255)));
+        Draw(FillCircle,345 + 5*Sin(FRAMES), 95+5*Cos(FRAMES), 7,RGB(IntRandom(50,255),IntRandom(50,255),IntRandom(50,255)));
+        
     }
-    else{
-        Text("Es Otro",200,400,20,RGB(0,0,0));
-    }
-
-    */
 }
