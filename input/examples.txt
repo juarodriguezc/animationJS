@@ -1,0 +1,10 @@
+//Ejemplo 1     -       Espiral de Arquimedes
+function setup(){
+    SetCanvas(1200,1200);
+    SetBackground(RGB(0,0,0));
+}
+
+function animate(){
+    sum = sum + 0.1;
+    Draw(FillCircle,CANVAS_WIDTH/2 + FRAMES*Sin(sum), CANVAS_HEIGHT/2+FRAMES*Cos(sum), 10,RGB(IntRandom(50,255),IntRandom(50,255),IntRandom(50,255)));
+}
