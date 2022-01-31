@@ -7,11 +7,13 @@ public class Main {
             // create a CharStream that reads from standard input
             // create a lexer that feeds off of input CharStream
             AnimationJSLexer lexer;
+            /*
             if (args.length>0)
-                lexer = new AnimationJSLexer(CharStreams.fromFileName(args[0]));
+                lexer = new AnimationJSLexer(CharStreams.fromFileName("input/input.txt"));
             else
                 lexer = new AnimationJSLexer(CharStreams.fromStream(System.in));
-
+            */
+            lexer = new AnimationJSLexer(CharStreams.fromFileName("input/input.txt"));
             // create a buffer of tokens pulled from the lexer
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             // create a parser that feeds off the tokens buffer

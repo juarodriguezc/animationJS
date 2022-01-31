@@ -7,16 +7,16 @@ function setup(){
     int yPos = 300;
     int paso = 5;
     //Load background
-    img background = Src("/assets/background.jpg");
+    img background = Src("assets/background.jpg");
     //Load dog images
     //Idle
-    img idle_dog = Src("/assets/dog_idle.png");
+    img idle_dog = Src("assets/dog_idle.png");
     animation idleAnim = Nanimation(idle_dog, 575, 523, 7);
     //Walk
-    img walk_dog = Src("/assets/dog_walk.png");
+    img walk_dog = Src("assets/dog_walk.png");
     animation walkAnim = Nanimation(walk_dog, 575, 523, 9);
     //Sit
-    img sit_dog = Src("/assets/dog_sit.png");
+    img sit_dog = Src("assets/dog_sit.png");
     animation sitAnim = Nanimation(sit_dog, 575, 523, 5);
 }
 
